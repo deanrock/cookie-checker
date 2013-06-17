@@ -5,8 +5,6 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 import os
 
-browser = None
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =  config.DB_URI
 app.config['SQLALCHEMY_POOL_RECYCLE'] = 3600
@@ -17,12 +15,12 @@ app.secret_key = config.secret_key
 db.init_app(app)
 
 def check_cookies(t):
-	global browser
 
 	print t.domain
 
-	if not browser:
-		browser = webdriver.Firefox()
+	os.system("killall -9 firefox")
+
+	browser = webdriver.Firefox(webdriver.FirefoxProfile(profile_directory='C:/Users/Dejan/Desktop/cookie-checker/profile'))
 	
 	browser.delete_all_cookies()
 
@@ -51,9 +49,7 @@ def check_cookies(t):
 	t.status = 3
 	db.session.commit()
 
-	
-	
-	print cookies
+	browser.close()
 
 if __name__ == '__main__':
 
@@ -68,8 +64,7 @@ if __name__ == '__main__':
 			except:
 				t.status = 3
 				t.info = "Error! Please try again!"
-				os.system("killall -9 firefox")
-				browser = webdriver.Firefox()
+				
 				db.session.commit()
 		else:
 			sleep(1)
