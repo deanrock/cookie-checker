@@ -46,8 +46,21 @@ def js_get_cookies(id):
 	test = Test.query.get(id)
 
 	cookies = [c.serialize for c in test.cookies]
-	print cookies
-	return jsonify({'cookies': cookies})
+
+	cookies_distinct = []
+
+	for c in cookies:
+		found = False
+
+		for co in cookies_distinct:
+			if co['domain'] == c['domain'] and co['name'] == c['name']:
+				found = True
+				break
+
+		if not found:
+			cookies_distinct.append(c)
+            
+	return jsonify({'cookies': cookies_distinct})
 
 @app.route('/check', methods=['POST'])
 def check():

@@ -57,6 +57,7 @@ class Cookie(db.Model):
 	name = db.Column(String(255))
 	domain = db.Column(String(255))
 	value = db.Column(String(255))
+	expires = db.Column(String(255))
 
 	test = relationship('Test', backref=backref('cookies'), 
 		primaryjoin=(Test.id == test_id))
@@ -71,7 +72,17 @@ class Cookie(db.Model):
 			'test': self.test_id
 		}
 
-
+class ProxyCookie(db.Model):
+    __tablename__ = 'proxy_cookies'
+    
+    id = db.Column(Integer, primary_key=True)
+    datetime = db.Column(DateTime)
+    
+    name = db.Column(String(255))
+    value = db.Column(String(255))
+    expiry = db.Column(String(255))
+    host = db.Column(String(255))
+    
 
 
 
