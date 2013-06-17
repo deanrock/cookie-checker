@@ -42,7 +42,14 @@ function set_status(status) {
 			$('#status_2').attr('class', 'progtrckr-done');
 			$('#status_3').attr('class', 'progtrckr-done');
 			break;
-	}
+		case 4:
+			$('#status_1').attr('class', 'progtrckr-done');
+			$('#status_2').attr('class', 'progtrckr-error');
+			$('#status_3').attr('class', 'progtrckr-error');
+			break;
+    
+    
+    }
 	
 }
 
@@ -67,11 +74,9 @@ function refresh() {
         break;
     }
 
-	set_status(test.status);
+	set_status(test.status); 
 
-  
-
-    if(test.info!=null) {
+    if(test.status == 4) {
       $('#status_2').attr('class', 'progtrckr-error');
       $('#status_3').attr('class', 'progtrckr-error');
       $('#error').html('Error: '+test.info);

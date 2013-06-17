@@ -2,4 +2,6 @@ config.py
 *.pyc
 nohup.out
 *.jar
-
+profiles/
+chromedriver
+*.log
