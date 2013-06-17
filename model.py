@@ -69,7 +69,8 @@ class Cookie(db.Model):
 			'name': self.name,
 			'domain': self.domain,
 			'value': self.value,
-			'test': self.test_id
+			'test': self.test_id,
+			'expires': self.expires
 		}
 
 class ProxyCookie(db.Model):

@@ -24,6 +24,12 @@ ol.progtrckr {
     border-bottom: 7px solid yellowgreen;
    }
    
+    ol.progtrckr li.progtrckr-error {
+    color: black;
+    border-bottom: 7px solid red;
+   }
+
+
    ol.progtrckr li.progtrckr-todo {
     color: silver; 
     border-bottom: 7px solid silver;
@@ -75,4 +81,22 @@ ol.progtrckr {
     width: 1.2em;
     border: 0.5em solid silver;
     border-radius: 2.2em;
+   }
+
+
+   
+   ol.progtrckr li.progtrckr-error:before {
+    content: "\2713";
+    color: white;
+    background-color: red;
+    height: 2.2em;
+    width: 2.2em;
+    line-height: 2.2em;
+    border: none;
+    border-radius: 2.2em;
+   }
+
+   #error {
+    margin-top:50px;
+    color:red;
    }

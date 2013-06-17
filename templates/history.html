@@ -13,11 +13,37 @@
   <td><a href="{{url_for('test', id=t.id)}}">#{{t.id}}</a>
 <td><a href="{{url_for('test', id=t.id)}}">{{t.domain}}</a>
 
-  <td>{{t.status}}
+  <td class="check_status" title="{% if t.info %}{{t.info}}{%endif%}">{{t.status}}
     <td>{{t.datetime}}
 </tr>
           {% endfor %}
         </table>
       </div>
 
+{% endblock %}
+
+{% block javascript %}
+$(document).ready(function() {
+  $('.check_status').each(function() {
+     var status = $(this).html();
+     var error = $(this).attr('title');
+
+     if (error.length>0) {
+       $(this).html('error');
+     }else{
+     
+       switch($.trim(status)) {
+         case '1':
+           $(this).html('waiting');
+           break;
+        case '2':
+           $(this).html('processing');
+           break;
+        case '3':
+           $(this).html('finished');
+           break;
+       }
+   }
+  });
+});
 {% endblock %}

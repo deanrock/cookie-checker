@@ -65,7 +65,7 @@ def js_get_cookies(id):
 @app.route('/check', methods=['POST'])
 def check():
 	if 'domain' in request.form:
-		domain = request.form['domain']
+		domain = 'http://'+str(request.form['domain'])
 
 		test = Test()
 		test.domain = domain
