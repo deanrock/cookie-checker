@@ -25,6 +25,9 @@ def check_cookies(t):
 
 	print t.domain
 
+	t.status = 2
+	db.session.commit()
+
 	os.system("killall -9 firefox")
 
 	vdisplay = Xvfb()
@@ -39,8 +42,7 @@ def check_cookies(t):
 	
 	browser.delete_all_cookies()
 
-	t.status = 2
-	db.session.commit()
+	
 	
 	start = datetime.datetime.now()
 
@@ -67,11 +69,6 @@ def check_cookies(t):
 		c.expires = co['expiry']
 
 		db.session.add(c)
-	
-	#ctx = app.test_request_context()
-	#ctx.push()
-	#proxy_c = ProxyCookie.query.filter(ProxyCookie.datetime.between(start, end))
-	#ctx.pop()
 	
 	con = conn()
 	cur = con.cursor(mdb.cursors.DictCursor)
