@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+ <div class="jumbotron">
+        <form action="{{url_for('check')}}" method="post">
+        <h2>Check your cookies</h2>
+        <br />
+        <p class="lead">
+            Domain: <input placeholder="http://example.com" type="text" name="domain" />
+        </p>
+
+        <input type="submit" class="btn btn-large btn-success" value="Check" />
+      </div>
+
+      
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+ <div class="jumbotron">
+        <h2>History</h2>
+        <br />
+        
+        <table style="width:100%" class="table table-striped table-bordered">
+          <tr><th>ID<th>URL<th>Status<th>Started
+          {% for t in tests %}
+
+<tr>
+  <td><a href="{{url_for('test', id=t.id)}}">#{{t.id}}</a>
+<td><a href="{{url_for('test', id=t.id)}}">{{t.domain}}</a>
+
+  <td>{{t.status}}
+    <td>{{t.datetime}}
+</tr>
+          {% endfor %}
+        </table>
+      </div>
+
+{% endblock %}
