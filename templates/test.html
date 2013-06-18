@@ -55,7 +55,7 @@ function set_status(status) {
 
 
 function refresh() {
-  $.get('/js-test-info/{{test.id}}', function(data) {
+  $.get('/js-test-info/{{test.url}}', function(data) {
     var test = data.test;
     console.log(test);
     
@@ -89,7 +89,7 @@ function refresh() {
       clearInterval(x);
 
       //get cookies
-      $.get('/js-get-cookies/{{test.id}}', function(data) {
+      $.get('/js-get-cookies/{{test.url}}', function(data) {
         cookies = data.cookies;
 
         for(c in cookies) {

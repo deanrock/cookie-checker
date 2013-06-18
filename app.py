@@ -29,21 +29,24 @@ db.init_app(app)
 def index():
 	return render_template('index.html')
 
-@app.route('/test/<id>')
-def test(id):
-	test = Test.query.get(id)
+@app.route('/test/<url>')
+def test(url):
+	test = Test.query.filter(Test.url == url).first()
+
+	if not test:
+		return redirect(url_for('index'))
 
 	return render_template('test.html', test=test)
 
-@app.route('/js-test-info/<id>')
-def js_test_info(id):
-	test = Test.query.get(id)
+@app.route('/js-test-info/<url>')
+def js_test_info(url):
+	test = Test.query.filter(Test.url == url).first()
 
 	return jsonify({'test':test.serialize})
 
-@app.route('/js-get-cookies/<id>')
-def js_get_cookies(id):
-	test = Test.query.get(id)
+@app.route('/js-get-cookies/<url>')
+def js_get_cookies(test):
+	test = Test.query.filter(Test.url == url).first()
 
 	cookies = [c.serialize for c in test.cookies]
 
@@ -59,23 +62,34 @@ def js_get_cookies(id):
 
 		if not found:
 			cookies_distinct.append(c)
-            
+
 	return jsonify({'cookies': cookies_distinct})
 
 @app.route('/check', methods=['POST'])
 def check():
 	if 'domain' in request.form:
+		if len(request.form['domain']) < 4:
+			return redirect(url_for('index'))
+
 		domain = 'http://'+str(request.form['domain'])
 
 		test = Test()
 		test.domain = domain
 		test.datetime = datetime.datetime.now()
+
+		test.generate_url()
+
+		if 'public' in request.form and request.form['public'] == 'yes':
+			test.private = 0
+		else:
+			test.private = 1
+
 		test.status = 1
 
 		db.session.add(test)
 		db.session.commit()
-
-		return redirect(url_for('test', id=test.id))
+		
+		return redirect(url_for('test', url=test.url))
 
 	return redirect(url_for('index'))
 
