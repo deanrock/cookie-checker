@@ -6,13 +6,15 @@
         <br />
         
         <table style="width:100%" class="table table-striped table-bordered">
-          <tr><th>ID<th>URL<th>Status<th>Started
+          <tr><th>URL<th>Status<th>Started
           {% for t in tests %}
 
 <tr>
-  <td><a href="{{url_for('test', id=t.id)}}">#{{t.id}}</a>
-<td><a href="{{url_for('test', id=t.id)}}">{{t.domain}}</a>
-
+  {% if t.private == 0 %}
+<td><a href="{{url_for('test', url=t.url)}}">{{t.domain}}</a>
+{% else %}
+<td>private
+  {% endif %}
   <td class="check_status" title="{% if t.info %}{{t.info}}{%endif%}">{{t.status}}
     <td>{{t.datetime}}
 </tr>

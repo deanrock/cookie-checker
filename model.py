@@ -70,7 +70,7 @@ class Url(db.Model):
     url = db.Column(String(255))
     test_id = db.Column(Integer, ForeignKey('tests.id'))
 
-    test = relationship('Test', backref=backref('tests'),
+    test = relationship('Test', backref=backref('urls'),
             primaryjoin=(Test.id == test_id))
 
     @property
@@ -104,7 +104,6 @@ class Cookie(db.Model):
             'name': self.name,
             'domain': self.domain,
             'value': self.value,
-            'test': self.test_id,
             'expires': self.expires
         }
 

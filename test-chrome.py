@@ -9,16 +9,17 @@ try:
 except:
     pass
 
-print "1"
-co = webdriver.ChromeOptions()
-co.add_argument("--user-data-dir=./profiles")
-print "2"
+
 chromedriver = "./chromedriver"
 os.environ["webdriver.chrome.driver"] = chromedriver
 print "3"
-browser = webdriver.Chrome(chromedriver, chrome_options = co) 
+browser = webdriver.Chrome(chromedriver) 
 print "4"
 browser.get('http://24ur.com')
+
+links = browser.find_elements_by_xpath("//a")
+
+print links
 print "5"
 browser.quit()
 

@@ -42,13 +42,26 @@ def test(url):
 def js_test_info(url):
 	test = Test.query.filter(Test.url == url).first()
 
+	if not test:
+		return jsonify({'test':None})
+
 	return jsonify({'test':test.serialize})
 
 @app.route('/js-get-cookies/<url>')
-def js_get_cookies(test):
+def js_get_cookies(url):
 	test = Test.query.filter(Test.url == url).first()
 
-	cookies = [c.serialize for c in test.cookies]
+	urls = test.urls
+
+	cookies = []
+
+	for url in urls:
+		for cookie in url.cookies:
+			cookies.append(cookie)
+
+	return jsonify({'cookies':[c.serialize for c in cookies]})
+
+	"""cookies = [c.serialize for c in test.cookies]
 
 	cookies_distinct = []
 
@@ -63,7 +76,7 @@ def js_get_cookies(test):
 		if not found:
 			cookies_distinct.append(c)
 
-	return jsonify({'cookies': cookies_distinct})
+	return jsonify({'cookies': cookies_distinct})"""
 
 @app.route('/check', methods=['POST'])
 def check():
