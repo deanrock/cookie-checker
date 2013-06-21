@@ -51,15 +51,14 @@ def js_test_info(url):
 def js_get_cookies(url):
 	test = Test.query.filter(Test.url == url).first()
 
-	urls = test.urls
+	urls = []
 
-	cookies = []
+	for url in test.urls:
+		cookies = [cookie.serialize for cookie in url.cookies]
 
-	for url in urls:
-		for cookie in url.cookies:
-			cookies.append(cookie)
+		urls.append({'url': url.serialize, 'cookies':cookies})
 
-	return jsonify({'cookies':[c.serialize for c in cookies]})
+	return jsonify({'urls':urls})
 
 	"""cookies = [c.serialize for c in test.cookies]
 

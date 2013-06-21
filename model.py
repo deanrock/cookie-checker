@@ -76,9 +76,8 @@ class Url(db.Model):
     @property
     def serialize(self):
         return {
-                'datetime': datetime,
-                'url': url,
-                'test_id': test_id
+                'datetime': self.datetime,
+                'url': self.url
                }
 
 

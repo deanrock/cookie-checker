@@ -10,6 +10,7 @@ from xvfbwrapper import Xvfb
 import shutil
 from urlparse import urlparse
 import random
+import socket
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =  config.DB_URI
@@ -22,44 +23,58 @@ class get_cookies:
     def __init__(self):
         self.browser = None
         self.to_visit = []
+        self.test = None
+        self.vdisplay = None
 
     def __parse_cookies(self, url):
         print "parse %s" % url
 
-        #socket.setdefaulttimeout(2)
-        self.browser.set_page_load_timeout(3)
-        self.browser.get(url)
+        try:
+            socket.setdefaulttimeout(15)
+            self.browser.set_page_load_timeout(15)
+            self.browser.get(url)
+            
 
-        u = Url()
-        u.test_id = t.id
-        u.url = self.url
-        u.datetime = datetime.datetime.now()
-        
-        db.session.add(u)
-        db.session.commit()
-        print "bc"
-        cookies = self.browser.get_cookies()
-        print "ac"
-        for co in cookies:
-            c = Cookie()
-            c.url_id = u.id
-            c.name = co['name']
-            c.domain = co['domain']
-            c.value = co['value'][:200]
 
-            if 'expiry' in co:
-                c.expires = co['expiry']
+            u = Url()
+            u.test_id = self.test.id
+            u.url = url
+            u.datetime = datetime.datetime.now()
+            
+            db.session.add(u)
+            db.session.commit()
+            
+            cookies = self.browser.get_cookies()
+            
+            for co in cookies:
+                c = Cookie()
+                c.url_id = u.id
+                c.name = co['name']
+                c.domain = co['domain']
+                c.value = co['value'][:200]
 
-            db.session.add(c)
+                if 'expiry' in co:
+                    c.expires = co['expiry']
 
-        db.session.commit()
+                db.session.add(c)
+
+            db.session.commit()
+        except socket.timeout:
+            return
+
+        socket.setdefaulttimeout(2)
 
     def check_cookies(self, t):
+        self.test = t
         t.status = 2
         db.session.commit()
 
-        vdisplay = Xvfb()
-        vdisplay.start()
+        os.system("killall -9 chrome")
+        os.system("killall -9 chromedriver")
+        os.system("killall -9 Xvfb")
+
+        self.vdisplay = Xvfb()
+        self.vdisplay.start()
 
         #chrome options
         #co = webdriver.ChromeOptions()
@@ -89,21 +104,28 @@ class get_cookies:
 
         domain = urlparse(t.domain).netloc
 
-        links = self.browser.find_elements_by_tag_name("a")
+        links = []
+        try:
+            socket.setdefaulttimeout(2)
+            links = self.browser.find_elements_by_tag_name("a")
 
-        random.shuffle(links)
+            random.shuffle(links)
 
-        for link in links:
-            u = urlparse(link.get_attribute('href'))
+            for link in links:
+                href = link.get_attribute('href')
 
-            print u.netloc
-            if u.netloc == domain and link.get_attribute('href') != self.url:
-                print link.get_attribute('href')
-                self.to_visit.append(link.get_attribute('href'))
+                if href:
+                    u = urlparse(href)
 
-                if len(self.to_visit) == 3:
-                    break
-        
+                    if u.netloc == domain and href != self.url:
+                        
+                        self.to_visit.append(href)
+
+                        if len(self.to_visit) == 3:
+                            break
+        except socket.timeout:
+            pass
+
         for link in self.to_visit:
             self.__parse_cookies(link)
 
@@ -116,8 +138,12 @@ class get_cookies:
         t.finished = datetime.datetime.now()
         db.session.commit()
 
-        self.browser.close()
-        vdisplay.stop()
+        try:
+            self.browser.close()
+        except:
+            pass
+        
+        self.vdisplay.stop()
 
 if __name__ == '__main__':
 
@@ -127,17 +153,16 @@ if __name__ == '__main__':
         t = Test.query.filter(Test.status==1).first()
 
         if t:
-            gc = get_cookies()
-            gc.check_cookies(t)
-            print "hext"
-            #try:
-            #    check_cookies(t)
-            #except Exception,e:
-            #    print str(e)
-            #    t.status = 4
-            #    t.info = "Please try again!"
-            #
-            #   db.session.commit()
+            
+            try:
+                gc = get_cookies()
+                gc.check_cookies(t)
+            except Exception,e:
+                print str(e)
+                t.status = 4
+                t.info = "Please try again!"
+            
+                db.session.commit()
         else:
             sleep(1)
 
